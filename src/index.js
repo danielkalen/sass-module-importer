@@ -77,12 +77,14 @@ class ModuleImporter {
       if (resolved) {
         resolve({ url, prev, resolved });
       } else {
-        fs.readdir(url, (err, files) => {
+        const fullPath = prev === 'stdin' ? url : path.resolve(path.dirname(prev), url);
+
+        fs.readdir(fullPath, (err, files) => {
           if (err) return resolve({ url, prev, resolved });
           let resolvedURL = url;
           const match = files.find((file) => file.includes('index.') && extensions.test(path.extname(file)));
           if (match) {
-            resolvedURL = path.resolve(url, match);
+            resolvedURL = path.resolve(fullPath, match);
           }
           return resolve({ url: resolvedURL, prev, resolved: !!match });
         });
