@@ -5,6 +5,7 @@ import Map from 'es6-map';
 import assign from 'object-assign';
 import npmResolve from 'resolve';
 import bowerResolve from 'resolve-bower';
+const extensions = /scss|sass|css/;
 
 class ModuleImporter {
   constructor(opts) {
@@ -35,6 +36,7 @@ class ModuleImporter {
     return Promise.resolve({ url, prev })
       .then(file => this.npm(file))
       .then(file => this.bower(file))
+      .then(file => this.index(file))
       .then(file => this.read(file))
       .then((res) => {
         if (res) {
@@ -65,6 +67,24 @@ class ModuleImporter {
       } else {
         resolver(url, this.options, (err, res) => {
           resolve({ url: (err ? url : res), prev, resolved: !err });
+        });
+      }
+    });
+  }
+
+  index({ url, prev, resolved }) {
+    return new Promise((resolve) => {
+      if (resolved) {
+        resolve({ url, prev, resolved });
+      } else {
+        fs.readdir(url, (err, files) => {
+          if (err) return resolve({ url, prev, resolved });
+          let resolvedURL = url;
+          const match = files.find((file) => file.includes('index.') && extensions.test(path.extname(file)));
+          if (match) {
+            resolvedURL = path.resolve(url, match);
+          }
+          return resolve({ url: resolvedURL, prev, resolved: !!match });
         });
       }
     });

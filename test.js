@@ -53,6 +53,22 @@ describe('sass-module-importer', () => {
     });
   });
 
+  it('should import index files from local directories', (done) => {
+    getCSS(null, '@import "./fixtures/inside_dir_1";').then((css) => {
+      const expected = `.red{color:red}\n`;
+      expect(css).to.exist.and.equal(expected);
+      done();
+    });
+  });
+
+  it('should import _index files from local directories', (done) => {
+    getCSS(null, '@import "./fixtures/inside_dir_2";').then((css) => {
+      const expected = `.red{color:red}\n`;
+      expect(css).to.exist.and.equal(expected);
+      done();
+    });
+  });
+
   describe('npm', () => {
     it('should import contents of CSS from npm module using the "main" field', (done) => {
       getCSS(null, '@import "test-npm-main-css";').then((css) => {
