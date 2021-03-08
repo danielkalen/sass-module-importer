@@ -26,8 +26,10 @@
     "build": "rollup -c",
     "lint": "eslint src/index.js test.js",
     "pretest": "echo 'noop'",
+    "pretest-old": "npm run build",
     "test": "mocha --compilers js:buble/register",
-    "prepublish": "npm test",
+    "prepublish": "echo 'noop'",
+    "prepublish-old": "npm test",
     "preversion": "npm test",
     "version": "npm run build",
     "postversion": "git push && git push --tags"
